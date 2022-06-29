@@ -53,6 +53,8 @@ scoreA=0
 scoreB=0
 radiusPointer=5
 colorPointer=(255,0,0)
+L1=0
+L2=0
 
 textFont=cv2.FONT_HERSHEY_SIMPLEX
 textColor=(255,255,255)
@@ -65,6 +67,8 @@ while True:
     frame=cv2.flip(frame,1)
     x=np.zeros([height,width,3],dtype=np.uint8)
     x[:,:]=(0,0,0)
+    L1Last=L1
+    L2Last=L2
     myHands,handsType=findHands.parseLandMarks(frame)
     for oneHand,handType in zip(myHands,handsType):
         if(handType=='Left'):
@@ -91,6 +95,7 @@ while True:
                 xPos=int(width/2)
                 yPos=int(height/2)
                 livesA=livesA-1
+                L1=L1+1
         if(ballRightEdge>=(1280-rectW) and handType=='Right'):
             if((yPos>=(oneHand[5][1]-int(rectH/2))) and (yPos<=(oneHand[5][1]+int(rectH/2)))):
                 value=choice([i for i in range(-1,2) if i not in [0]])
@@ -104,11 +109,17 @@ while True:
             else:
                 xPos=int(width/2)
                 yPos=int(height/2)
-                livesB=livesB-1   
+                livesB=livesB-1 
+                L2=L2+1  
     if(ballTopEdge<=0 or ballBottomEdge>=height):
         deltaY=deltaY*(-1)
     xPos=xPos+deltaX
     yPos=yPos+deltaY
+    if(L1Last!=L1 or L2Last!=L2):
+        val1=choice([i for i in range(-1,2) if i not in [0]])
+        val2=choice([i for i in range(-1,2) if i not in [0]])
+        deltaX=deltaX*(val1)
+        deltaX=deltaX*(val2)
     if(livesA==0 or livesB==0):
         cv2.putText(x,'GAME OVER',(300,350),cv2.FONT_HERSHEY_COMPLEX,4,textColor,textThickness)
         cv2.putText(x,'SCORE A : '+str(scoreA),(300,450),textFont,2,textColor,textThickness)

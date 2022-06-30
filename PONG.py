@@ -21,7 +21,7 @@ class mpHands:
         handsType=[]
         frameRGB=cv2.cvtColor(frame,cv2.COLOR_BGR2RGB)
         results=self.handsDetect.process(frameRGB)
-        if results.multi_hand_landmarks != 0:
+        if results.multi_hand_landmarks != None:
             for hand in results.multi_handedness:
                 handType=hand.classification[0].label
                 handsType.append(handType)
@@ -70,6 +70,10 @@ while True:
     L1Last=L1
     L2Last=L2
     myHands,handsType=findHands.parseLandMarks(frame)
+    ballTopEdge=(yPos-ballRadius)
+    ballBottomEdge=(yPos+ballRadius)
+    ballLeftEdge=(xPos-ballRadius)
+    ballRightEdge=(xPos+ballRadius)
     for oneHand,handType in zip(myHands,handsType):
         if(handType=='Left'):
             cv2.rectangle(x,(0,oneHand[5][1]-int(rectH/2)),(rectW,(oneHand[5][1]+int(rectH/2))),rectColor,-1)
@@ -77,10 +81,6 @@ while True:
             cv2.rectangle(x,((1280-rectW),oneHand[5][1]-int(rectH/2)),(1280,(oneHand[5][1]+int(rectH/2))),rectColor,-1)
         cv2.circle(x,oneHand[5],radiusPointer,colorPointer,-1)
         cv2.circle(x,(xPos,yPos),ballRadius,ballColor,-1)
-        ballTopEdge=(yPos-ballRadius)
-        ballBottomEdge=(yPos+ballRadius)
-        ballLeftEdge=(xPos-ballRadius)
-        ballRightEdge=(xPos+ballRadius)
         if(ballLeftEdge<=rectW and handType=='Left'):
             if((yPos>=(oneHand[5][1]-int(rectH/2))) and (yPos<=(oneHand[5][1]+int(rectH/2)))):
                 value=choice([i for i in range(-1,2) if i not in [0]])
